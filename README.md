@@ -4,7 +4,6 @@
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/code-distortion/laravel-helpers?style=flat-square)
 ![Laravel](https://img.shields.io/badge/laravel-7%20%26%208-blue?style=flat-square)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/code-distortion/laravel-helpers/run-tests?label=tests&style=flat-square)](https://github.com/code-distortion/laravel-helpers/actions)
-[![Buy The World a Tree](https://img.shields.io/badge/treeware-%F0%9F%8C%B3-lightgreen?style=flat-square)](https://plant.treeware.earth/code-distortion/laravel-helpers)
 
 
 
@@ -44,13 +43,17 @@ Str::unspace($string);
 Str::of($string)->unspace();
 ```
 
-You can specify which character/s to remove:
+> By default, all *whitespace* characters are searched for and replaced with spaces.
+
+You can specify which character/s to search for:
 
 ```php
 // '_a__b__c_' >> 'a_b_c'
 Str::unspace($string, '_');
 Str::of($string)->unspace('_');
 ```
+
+> Searching for an empty string will search for all *whitespace* characters.
 
 And you can specify a replacement:
 
@@ -60,7 +63,9 @@ Str::unspace($string, ' ', '-');
 Str::of($string)->unspace(' ', '-');
 ```
 
-> If no replacement is specified, the character being removed will be used (when only 1 character long, otherwise a space is used).
+> If no replacement is specified, the character being searched for will be used.
+> 
+> If more than one character is being searched for, a space is used as the replacement.
 
 
 
