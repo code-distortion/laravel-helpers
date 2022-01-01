@@ -6,7 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 
-## 0.1.0 - 2021-09-12
+## [0.1.1] - 2022-01-01
+
+### Added
+- Added support for PHP 8.1
+- Added phpstan ^1.0 to dev dependencies
+
+### Fixed
+- Changed dependency list to refer to specific versions of PHP - to prevent installation on platforms with future versions of PHP before being tested
+
+
+
+## [0.1.0] - 2021-09-12
 
 ### Added
 - Initial commit
