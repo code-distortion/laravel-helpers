@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/code-distortion/laravel-helpers.svg?style=flat-square)](https://packagist.org/packages/code-distortion/laravel-helpers)
 ![PHP Version](https://img.shields.io/badge/PHP-8.0%20to%208.2-blue?style=flat-square)
-![Laravel](https://img.shields.io/badge/laravel-7%2C%208%20%26%209-blue?style=flat-square)
+![Laravel](https://img.shields.io/badge/laravel-7%2C%208%2C%209%20%26%2010-blue?style=flat-square)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/code-distortion/laravel-helpers/run-tests.yml?branch=master&style=flat-square)](https://github.com/code-distortion/laravel-helpers/actions)
 
 
