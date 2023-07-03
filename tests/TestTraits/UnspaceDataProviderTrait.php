@@ -12,7 +12,7 @@ trait UnspaceDataProviderTrait
      *
      * @return array{ array{string, string, string[]}}
      */
-    public function stringableDataProvider(): array
+    static public function stringableDataProvider(): array
     {
         return [
             ['', '    ', []],

@@ -3,5 +3,6 @@ composer.lock
 docker
 vendor
 .phpunit.result.cache
+phpunit.cache
 .idea
 todo.txt

@@ -25,13 +25,13 @@ class UnspaceTest extends IntegrationTestCase
      * @param array<string[]> $params   The parameters to pass.
      * @return void
      */
-    public function test_str_unspace_macro(string $expected, string $string, array $params): void
+    static public function test_str_unspace_macro(string $expected, string $string, array $params): void
     {
         $outcome = match (count($params)) {
             0 => Str::unspace($string),
             1 => Str::unspace($string, $params[0]),
             default => Str::unspace($string, $params[0], $params[1]),
         };
-        $this->assertSame($expected, $outcome);
+        self::assertSame($expected, $outcome);
     }
 }

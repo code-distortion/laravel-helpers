@@ -6,9 +6,53 @@ on:
     - cron: "0 0 * * 0"
 
 jobs:
-  php-82:
+  php82-phpunit10:
 
-    name: ${{ matrix.os }} - PHP ${{ matrix.php }} - TestBench ${{ matrix.testbench }} - ${{ matrix.dependency-prefer }}
+    name: PHP${{ matrix.php }} TB${{ matrix.testbench }} ${{ matrix.os-title }} ${{ matrix.dependency-prefer-title }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        php: [8.2]
+        testbench: [^8.0]
+        phpunit: ["^10.1.0"]
+        dependency-prefer: [prefer-stable, prefer-lowest]
+        phpunit-config-file: [phpunit.xml.dist]
+        include:
+          - os: ubuntu-latest
+            os-title: ubuntu
+          - os: macos-latest
+            os-title: macos
+          - os: windows-latest
+            os-title: win
+          - dependency-prefer: prefer-stable
+            dependency-prefer-title: stable
+          - dependency-prefer: prefer-lowest
+            dependency-prefer-title: lowest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: fileinfo, mb_string
+          coverage: none
+
+      - name: Install dependencies (composer)
+        run: |
+          composer require "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --dev --no-interaction --no-update
+          composer update --${{ matrix.dependency-prefer }} --prefer-dist --no-interaction
+
+      - name: Execute tests
+        run: vendor/bin/phpunit --configuration=${{ matrix.phpunit-config-file }} --no-coverage --stop-on-error --stop-on-failure --exclude-group=ignore
+
+  php82-phpunit9:
+
+    name: PHP${{ matrix.php }} TB${{ matrix.testbench }} ${{ matrix.os-title }} ${{ matrix.dependency-prefer-title }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
@@ -16,7 +60,20 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         php: [8.2]
         testbench: [^6.22, ^7.0]
+        phpunit: ["^9.6"]
         dependency-prefer: [prefer-stable, prefer-lowest]
+        phpunit-config-file: [phpunit.up-to-9.xml.dist]
+        include:
+          - os: ubuntu-latest
+            os-title: ubuntu
+          - os: macos-latest
+            os-title: macos
+          - os: windows-latest
+            os-title: win
+          - dependency-prefer: prefer-stable
+            dependency-prefer-title: stable
+          - dependency-prefer: prefer-lowest
+            dependency-prefer-title: lowest
 
     steps:
       - name: Checkout code
@@ -29,37 +86,38 @@ jobs:
           extensions: fileinfo, mb_string
           coverage: none
 
-      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
-      - name: Determine composer's cache directory
-        id: composer-cache
+      - name: Install dependencies (composer)
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies (composer)
-        uses: actions/cache@v2
-        with:
-          path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-testbench-${{ matrix.testbench }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
-
-      - name: Install dependencies
-        run: |
-          composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
+          composer require "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --dev --no-interaction --no-update
           composer update --${{ matrix.dependency-prefer }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: vendor/bin/phpunit --exclude-group=ignore
+        run: vendor/bin/phpunit --configuration=${{ matrix.phpunit-config-file }} --no-coverage --stop-on-error --stop-on-failure --exclude-group=ignore
 
-  php-81:
+  php81:
 
-    name: ${{ matrix.os }} - PHP ${{ matrix.php }} - TestBench ${{ matrix.testbench }} - ${{ matrix.dependency-prefer }}
+    name: PHP${{ matrix.php }} TB${{ matrix.testbench }} ${{ matrix.os-title }} ${{ matrix.dependency-prefer-title }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         php: [8.1]
-        testbench: [^6.22, ^7.0]
+        testbench: [^6.22, ^7.0, ^8.0]
+        phpunit: ["^9.6"]
         dependency-prefer: [prefer-stable, prefer-lowest]
+        phpunit-config-file: [phpunit.up-to-9.xml.dist]
+        include:
+          - os: ubuntu-latest
+            os-title: ubuntu
+          - os: macos-latest
+            os-title: macos
+          - os: windows-latest
+            os-title: win
+          - dependency-prefer: prefer-stable
+            dependency-prefer-title: stable
+          - dependency-prefer: prefer-lowest
+            dependency-prefer-title: lowest
 
     steps:
       - name: Checkout code
@@ -72,29 +130,17 @@ jobs:
           extensions: fileinfo, mb_string
           coverage: none
 
-      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
-      - name: Determine composer's cache directory
-        id: composer-cache
+      - name: Install dependencies (composer)
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies (composer)
-        uses: actions/cache@v2
-        with:
-          path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-testbench-${{ matrix.testbench }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
-
-      - name: Install dependencies
-        run: |
-          composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
+          composer require "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --dev --no-interaction --no-update
           composer update --${{ matrix.dependency-prefer }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: vendor/bin/phpunit --exclude-group=ignore
+        run: vendor/bin/phpunit --configuration=${{ matrix.phpunit-config-file }} --no-coverage --stop-on-error --stop-on-failure --exclude-group=ignore
 
-  php-80:
+  php80:
 
-    name: ${{ matrix.os }} - PHP ${{ matrix.php }} - TestBench ${{ matrix.testbench }} - ${{ matrix.dependency-prefer }}
+    name: PHP${{ matrix.php }} TB${{ matrix.testbench }} ${{ matrix.os-title }} ${{ matrix.dependency-prefer-title }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
@@ -102,7 +148,20 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         php: ["8.0"]
         testbench: [^6.0, ^5.0]
+        phpunit: ["^9.3"]
         dependency-prefer: [prefer-stable, prefer-lowest]
+        phpunit-config-file: [phpunit.up-to-9.xml.dist]
+        include:
+          - os: ubuntu-latest
+            os-title: ubuntu
+          - os: macos-latest
+            os-title: macos
+          - os: windows-latest
+            os-title: win
+          - dependency-prefer: prefer-stable
+            dependency-prefer-title: stable
+          - dependency-prefer: prefer-lowest
+            dependency-prefer-title: lowest
 
     steps:
       - name: Checkout code
@@ -115,22 +174,10 @@ jobs:
           extensions: fileinfo, mb_string
           coverage: none
 
-      # find out composer's cache directory on the current os - for the "Cache dependencies (composer)" step below
-      - name: Determine composer's cache directory
-        id: composer-cache
+      - name: Install dependencies (composer)
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies (composer)
-        uses: actions/cache@v2
-        with:
-          path: ~/.composer/cache/files
-          key: php-${{ matrix.php }}-testbench-${{ matrix.testbench }}-os-${{ matrix.os }}-dependency-prefer-${{ matrix.dependency-prefer }}-composer-${{ hashFiles('composer.json') }}
-
-      - name: Install dependencies
-        run: |
-          composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
+          composer require "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --dev --no-interaction --no-update
           composer update --${{ matrix.dependency-prefer }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: vendor/bin/phpunit --exclude-group=ignore
+        run: vendor/bin/phpunit --configuration=${{ matrix.phpunit-config-file }} --no-coverage --stop-on-error --stop-on-failure --exclude-group=ignore
